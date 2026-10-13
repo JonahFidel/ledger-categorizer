@@ -49,3 +49,8 @@ Tool: Claude Code (Opus), driven from a planning conversation plus Lavish review
 - From phase 4 on, each phase is built on its own branch and merged only after I approve its review board.
   I tried to run parallel helper agents for the README draft and the full expected-output file; my agent setup
   only allows that through a heavier worker process, so I kept it sequential on branches instead.
+
+## Phase 4: writer + one command
+- AI wrote writer.py, categorize.py and tests. ledger_lines.csv keeps the spec's exact columns (CRLF, like the
+  given example); review_notes.csv holds one row per review reason. Amounts with more than 2 decimals are
+  flagged and never rounded.

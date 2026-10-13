@@ -78,6 +78,8 @@ def _parse_row(row: dict, line: int) -> Transaction:
         amount = Decimal(text("amount"))
         if not amount.is_finite():
             amount = bad("amount", "is not a finite number")
+        elif amount.as_tuple().exponent < -2:
+            issues.append(f"amount has more than 2 decimal places: {text('amount')!r}")
     except InvalidOperation:
         amount = bad("amount", "is not a number")
 

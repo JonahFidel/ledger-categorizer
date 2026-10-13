@@ -19,6 +19,10 @@ from typing import Iterable
 from ledger.feed import Transaction
 
 
+class ConfigError(ValueError):
+    """The operator settings file is malformed."""
+
+
 @dataclass(frozen=True)
 class TransferRules:
     own_accounts: dict[str, str]  # last4 -> account name
@@ -27,13 +31,16 @@ class TransferRules:
 
     @classmethod
     def from_toml(cls, path) -> "TransferRules":
-        with open(path, "rb") as f:
-            cfg = tomllib.load(f)
-        return cls(
-            own_accounts={a["last4"]: a["name"] for a in cfg["own_accounts"]},
-            keywords=tuple(k.upper() for k in cfg["transfers"]["keywords"]),
-            pair_window_days=int(cfg["transfers"]["pair_window_days"]),
-        )
+        try:
+            with open(path, "rb") as f:
+                cfg = tomllib.load(f)
+            return cls(
+                own_accounts={str(a["last4"]): a["name"] for a in cfg["own_accounts"]},
+                keywords=tuple(k.upper() for k in cfg["transfers"]["keywords"]),
+                pair_window_days=int(cfg["transfers"]["pair_window_days"]),
+            )
+        except (tomllib.TOMLDecodeError, KeyError, TypeError, ValueError) as e:
+            raise ConfigError(f"{path}: invalid operator settings ({e!r})") from e
 
     def has_keyword(self, txn: Transaction) -> bool:
         text = f"{txn.merchant} {txn.memo}".upper()
