@@ -33,3 +33,12 @@ Tool: Claude Code (Opus), driven from a planning conversation plus Lavish review
   tested so we know it's good before anything runs: added tests that pin the shipped list to the spec table.
 - Phase 1 follow-ups (my calls): unreadable values are left blank; review reasons go to a separate
   review_notes.csv so ledger_lines.csv keeps the spec's exact format; a missing file or column stops with a clear message.
+
+## Phase 3: transfers + classifier
+- AI wrote transfers.py, classify.py, operator.toml and tests. Output matches expected_first_15 exactly;
+  the only review lines in the real feed are the four unknown merchants.
+- AI tightened its own plan while coding: an own-account number now also requires the PAYMENT/TRANSFER
+  keyword, so a vendor whose store number happens to be 4421 can't become a silent transfer. Trade-off:
+  a reworded "XFER TO SAV 8810" now goes to review instead of auto-matching (flagged for my review).
+- AI added two review reasons beyond the spec, following my fail-safe rule: a winning version that is still
+  PENDING, and money moving the wrong way for its category (e.g. money out to TOAST PAYOUT). Neither fires on the real feed.
