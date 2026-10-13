@@ -23,3 +23,9 @@ Tool: Claude Code (Opus), driven from a planning conversation plus Lavish review
   as possible, and anything that looks wrong should go to the review queue. Rewritten so that bad values are
   left empty and recorded as issues on the row, conflicting versions keep one line flagged for review, and
   only an unreadable file (missing or missing a column) stops the run.
+- AI's code viewer soft-wrapped a long `def` line, which looked like misplaced parentheses. I flagged it;
+  AI turned off wrapping on the review board and split two over-long lines in the source.
+
+## Phase 2: merchant catalog
+- AI wrote catalog.py + tests. Boundary rule (name must end before a letter, so "SYSCOMM" != "SYSCO")
+  came out of my question about what "prefix without a word boundary" meant.
