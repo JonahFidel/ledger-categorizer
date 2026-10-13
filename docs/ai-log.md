@@ -58,3 +58,9 @@ Tool: Claude Code (Opus), driven from a planning conversation plus Lavish review
 ## Phase 5: full expected output
 - AI produced expected_full.csv (all 56 lines) and checked it against an independent spec-literal script that
   shares no code with the project: 0 disagreements. Golden tests run the real command end to end.
+
+## Phase 6: README (my review round)
+- Claude Code drafted the README in my voice; I reviewed it on the final board and asked for: clearer wording on
+  "merchant list first" and "both legs", a more specific name than "pairing window" (now `card_payment_match_days`),
+  the independent cross-check called out, the A+B combination credited, my real reason for Python, "Claude Code"
+  instead of "it", and a full account of the tools (Firstmate, Lavish, ChatGPT used conversationally only).

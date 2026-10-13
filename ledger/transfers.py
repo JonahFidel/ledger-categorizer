@@ -27,7 +27,7 @@ class ConfigError(ValueError):
 class TransferRules:
     own_accounts: dict[str, str]  # last4 -> account name
     keywords: tuple[str, ...]
-    pair_window_days: int
+    card_payment_match_days: int
 
     @classmethod
     def from_toml(cls, path) -> "TransferRules":
@@ -37,7 +37,7 @@ class TransferRules:
             return cls(
                 own_accounts={str(a["last4"]): a["name"] for a in cfg["own_accounts"]},
                 keywords=tuple(k.upper() for k in cfg["transfers"]["keywords"]),
-                pair_window_days=int(cfg["transfers"]["pair_window_days"]),
+                card_payment_match_days=int(cfg["transfers"]["card_payment_match_days"]),
             )
         except (tomllib.TOMLDecodeError, KeyError, TypeError, ValueError) as e:
             raise ConfigError(f"{path}: invalid operator settings ({e!r})") from e
@@ -68,7 +68,7 @@ def find_transfers(candidates: Iterable[Transaction], rules: TransferRules) -> d
         if name:
             evidence[t.id] = f"memo names the operator's own {name} account"
 
-    for bank_leg, card_leg in _pair_legs(keyed, rules.pair_window_days):
+    for bank_leg, card_leg in _pair_legs(keyed, rules.card_payment_match_days):
         evidence.setdefault(bank_leg.id, f"pairs with card payment {card_leg.id}")
         evidence.setdefault(card_leg.id, f"pairs with bank payment {bank_leg.id}")
 

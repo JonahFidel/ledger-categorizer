@@ -25,7 +25,7 @@ def card_payment(id="c", amount="-500.00", days=0, memo="ONLINE PAYMENT - THANK 
 def test_settings_load():
     assert RULES.own_accounts == {"4421": "card", "8810": "savings"}
     assert RULES.keywords == ("PAYMENT", "TRANSFER")
-    assert RULES.pair_window_days == 5
+    assert RULES.card_payment_match_days == 5
 
 
 @pytest.mark.parametrize("memo,expected", [
@@ -79,7 +79,7 @@ def test_legs_pair_without_any_account_number():
 
 
 @pytest.mark.parametrize("gap,pairs", [(0, True), (4, True), (5, True), (6, False)])
-def test_pairing_window_is_five_days(gap, pairs):
+def test_card_payment_match_window_is_five_days(gap, pairs):
     found = find_transfers([bank_payment(), card_payment(days=gap)], RULES)
     assert bool(found) is pairs
 
