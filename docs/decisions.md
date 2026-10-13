@@ -50,4 +50,6 @@ From phase 4 on, each phase was its own git branch, merged only after I approved
 
 I used ChatGPT only conversationally, to understand the assignment, never for planning, building or testing.
 
+I dictated some of my prompts with OpenSuperWhisper, a voice-to-text tool, and typed many others. It's part of my normal workflow, not something used for every prompt.
+
 Before phases 2-6 merged, I ran them through [no-mistakes](https://github.com/kunchenguid/no-mistakes): an automated code review, an agent driving the real command end to end against both expected files, and docs and lint checks. It found nothing to fix, then pushed the branch and opened PR #1, which I merged.
