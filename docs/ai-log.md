@@ -54,3 +54,7 @@ Tool: Claude Code (Opus), driven from a planning conversation plus Lavish review
 - AI wrote writer.py, categorize.py and tests. ledger_lines.csv keeps the spec's exact columns (CRLF, like the
   given example); review_notes.csv holds one row per review reason. Amounts with more than 2 decimals are
   flagged and never rounded.
+
+## Phase 5: full expected output
+- AI produced expected_full.csv (all 56 lines) and checked it against an independent spec-literal script that
+  shares no code with the project: 0 disagreements. Golden tests run the real command end to end.

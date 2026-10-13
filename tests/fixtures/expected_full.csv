@@ -1,0 +1,57 @@
+transaction_id,date,type,category,amount,needs_review
+txn_1001,2026-08-03,purchase,Food & beverage,1842.17,false
+txn_1002,2026-08-03,deposit,Delivery sales,-2210.45,false
+txn_1003,2026-08-03,purchase,Repairs & maintenance,146.88,false
+txn_1004,2026-08-04,deposit,Card sales,-6120.30,false
+txn_1005,2026-08-04,purchase,Food & beverage,977.60,false
+txn_1006,2026-08-04,purchase,Uncategorized,84.12,true
+txn_1007,2026-08-05,purchase,Utilities,1288.40,false
+txn_1008,2026-08-05,purchase,Smallwares & supplies,412.75,false
+txn_1009,2026-08-05,deposit,Card sales,-5877.10,false
+txn_1010,2026-08-06,purchase,Cleaning & supplies,233.00,false
+txn_1011,2026-08-06,purchase,Software,139.99,false
+txn_1012,2026-08-06,deposit,Delivery sales,-1430.22,false
+txn_1013,2026-08-07,purchase,Food & beverage,655.30,false
+txn_1014,2026-08-07,purchase,Utilities,219.90,false
+txn_1015,2026-08-07,purchase,Hiring,300.00,false
+txn_1016,2026-08-08,transfer,Transfer,4850.00,false
+txn_1017,2026-08-08,transfer,Transfer,-4850.00,false
+txn_1018,2026-08-08,refund,Food & beverage,-184.20,false
+txn_1019,2026-08-10,deposit,Card sales,-6402.85,false
+txn_1020,2026-08-10,purchase,Uncategorized,62.40,true
+txn_1021,2026-08-10,purchase,Food & beverage,1120.05,false
+txn_1022,2026-08-11,purchase,Rent,6500.00,false
+txn_1023,2026-08-11,purchase,Payroll,14210.66,false
+txn_1024,2026-08-11,refund,Repairs & maintenance,-59.99,false
+txn_1025,2026-08-12,purchase,Smallwares & supplies,1288.00,false
+txn_1026,2026-08-12,deposit,Delivery sales,-1980.13,false
+txn_1027,2026-08-13,transfer,Transfer,10000.00,false
+txn_1028,2026-08-13,purchase,Uncategorized,67.43,true
+txn_1029,2026-08-13,purchase,Food & beverage,2011.90,false
+txn_1030,2026-08-14,deposit,Card sales,-5990.00,false
+txn_1031,2026-08-14,purchase,Cleaning & supplies,233.00,false
+txn_1032,2026-08-14,purchase,Food & beverage,402.18,false
+txn_1033,2026-08-17,purchase,Utilities,341.20,false
+txn_1034,2026-08-17,deposit,Delivery sales,-1210.77,false
+txn_1035,2026-08-17,purchase,Food & beverage,890.00,false
+txn_1036,2026-08-18,refund,Smallwares & supplies,-212.40,false
+txn_1037,2026-08-18,refund,Uncategorized,-41.99,true
+txn_1038,2026-08-18,deposit,Card sales,-6231.44,false
+txn_1039,2026-08-19,purchase,Repairs & maintenance,388.12,false
+txn_1040,2026-08-19,transfer,Transfer,-5000.00,false
+txn_1041,2026-08-20,purchase,Food & beverage,1755.00,false
+txn_1042,2026-08-20,purchase,Hiring,300.00,false
+txn_1043,2026-08-21,deposit,Delivery sales,-2402.90,false
+txn_1044,2026-08-21,purchase,Cleaning & supplies,118.50,false
+txn_1045,2026-08-24,purchase,Payroll,14388.02,false
+txn_1046,2026-08-24,purchase,Food & beverage,518.35,false
+txn_1047,2026-08-25,deposit,Card sales,-6009.72,false
+txn_1048,2026-08-25,purchase,Food & beverage,1044.30,false
+txn_1049,2026-08-26,purchase,Food & beverage,1902.66,false
+txn_1050,2026-08-26,deposit,Delivery sales,-1388.05,false
+txn_1051,2026-08-27,transfer,Transfer,6200.00,false
+txn_1052,2026-08-27,transfer,Transfer,-6200.00,false
+txn_1053,2026-08-27,purchase,Repairs & maintenance,92.40,false
+txn_1054,2026-08-28,deposit,Card sales,-6540.18,false
+txn_1055,2026-08-28,purchase,Smallwares & supplies,305.60,false
+txn_1056,2026-08-31,purchase,Utilities,1310.75,false
