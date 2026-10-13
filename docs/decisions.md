@@ -49,3 +49,5 @@ Each decision and each build phase went onto an interactive [Lavish](https://git
 From phase 4 on, each phase was its own git branch, merged only after I approved its page. Parallel helper agents were blocked by Firstmate's guardrails, so the phases ran one after another.
 
 I used ChatGPT only conversationally, to understand the assignment, never for planning, building or testing.
+
+Before phases 2-6 merged, I ran them through [no-mistakes](https://github.com/kunchenguid/no-mistakes): an automated code review, an agent driving the real command end to end against both expected files, and docs and lint checks. It found nothing to fix, then pushed the branch and opened PR #1, which I merged.

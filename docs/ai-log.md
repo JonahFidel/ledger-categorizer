@@ -64,3 +64,8 @@ Tool: Claude Code (Opus), driven from a planning conversation plus Lavish review
   "merchant list first" and "both legs", a more specific name than "pairing window" (now `card_payment_match_days`),
   the independent cross-check called out, the A+B combination credited, my real reason for Python, "Claude Code"
   instead of "it", and a full account of the tools (Firstmate, Lavish, ChatGPT used conversationally only).
+
+## Validation
+- At my request, phases 2-6 went through no-mistakes before merging: code review (0 findings, low risk), live tests
+  (ran the command, diffed against both expected files, checked bad-feed handling: go), docs and lint (0 findings).
+  It opened PR #1, which I merged. The repo has no CI workflows, so there were no CI checks.
