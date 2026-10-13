@@ -1,0 +1,24 @@
+# Settings for the one operator whose feed we're categorizing.
+
+# The operator's own accounts, by last four digits. A memo that names one of
+# these (alongside PAYMENT/TRANSFER) is evidence the money stayed in-house.
+# Read off this feed for the case study; in production these come from the
+# bank-data provider's account list.
+[[own_accounts]]
+name = "card"
+last4 = "4421"
+
+[[own_accounts]]
+name = "savings"
+last4 = "8810"
+
+[transfers]
+# Words that mark a row as a possible transfer. Necessary, not sufficient:
+# rent's memo says "ACH PAYMENT" too.
+keywords = ["PAYMENT", "TRANSFER"]
+
+# Card-payment match window: how many days apart the bank side (money out)
+# and the card side (payment received) of one card payment may post.
+# Not in the spec: ACH card payments usually land 1-3 business days after
+# leaving the bank, and 3 business days can span a weekend (Thu -> Tue).
+card_payment_match_days = 5

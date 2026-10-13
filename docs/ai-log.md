@@ -23,3 +23,44 @@ Tool: Claude Code (Opus), driven from a planning conversation plus Lavish review
   as possible, and anything that looks wrong should go to the review queue. Rewritten so that bad values are
   left empty and recorded as issues on the row, conflicting versions keep one line flagged for review, and
   only an unreadable file (missing or missing a column) stops the run.
+- AI's code viewer soft-wrapped a long `def` line, which looked like misplaced parentheses. I flagged it;
+  AI turned off wrapping on the review board and split two over-long lines in the source.
+
+## Phase 2: merchant catalog
+- AI wrote catalog.py + tests. Boundary rule (name must end before a letter, so "SYSCOMM" != "SYSCO")
+  came out of my question about what "prefix without a word boundary" meant.
+- I agreed a broken merchant list should stop the command (we maintain it), but asked that it be thoroughly
+  tested so we know it's good before anything runs: added tests that pin the shipped list to the spec table.
+- Phase 1 follow-ups (my calls): unreadable values are left blank; review reasons go to a separate
+  review_notes.csv so ledger_lines.csv keeps the spec's exact format; a missing file or column stops with a clear message.
+
+## Phase 3: transfers + classifier
+- AI wrote transfers.py, classify.py, operator.toml and tests. Output matches expected_first_15 exactly;
+  the only review lines in the real feed are the four unknown merchants.
+- AI tightened its own plan while coding: an own-account number now also requires the PAYMENT/TRANSFER
+  keyword, so a vendor whose store number happens to be 4421 can't become a silent transfer. Trade-off:
+  a reworded "XFER TO SAV 8810" now goes to review instead of auto-matching (flagged for my review).
+- AI added two review reasons beyond the spec, following my fail-safe rule: a winning version that is still
+  PENDING, and money moving the wrong way for its category (e.g. money out to TOAST PAYOUT). Neither fires on the real feed.
+- I approved phase 3, kept AI's tighter own-account rule and both extra review reasons
+  (I agreed money moving the wrong way for its category should be flagged).
+
+## Process
+- From phase 4 on, each phase is built on its own branch and merged only after I approve its review board.
+  I tried to run parallel helper agents for the README draft and the full expected-output file; my agent setup
+  only allows that through a heavier worker process, so I kept it sequential on branches instead.
+
+## Phase 4: writer + one command
+- AI wrote writer.py, categorize.py and tests. ledger_lines.csv keeps the spec's exact columns (CRLF, like the
+  given example); review_notes.csv holds one row per review reason. Amounts with more than 2 decimals are
+  flagged and never rounded.
+
+## Phase 5: full expected output
+- AI produced expected_full.csv (all 56 lines) and checked it against an independent spec-literal script that
+  shares no code with the project: 0 disagreements. Golden tests run the real command end to end.
+
+## Phase 6: README (my review round)
+- Claude Code drafted the README in my voice; I reviewed it on the final board and asked for: clearer wording on
+  "merchant list first" and "both legs", a more specific name than "pairing window" (now `card_payment_match_days`),
+  the independent cross-check called out, the A+B combination credited, my real reason for Python, "Claude Code"
+  instead of "it", and a full account of the tools (Firstmate, Lavish, ChatGPT used conversationally only).

@@ -70,3 +70,9 @@ def test_unknown_account_is_kept_raw_and_flagged():
 def test_every_problem_on_a_row_is_reported():
     [t] = parse_rows([row(date="soon", amount="lots")])
     assert [i.split()[0] for i in t.issues] == ["date", "amount"]
+
+
+def test_more_than_two_decimal_places_is_kept_but_flagged():
+    [t] = parse_rows([row(amount="10.005")])
+    assert t.amount == Decimal("10.005")  # never rounded
+    assert t.issues == ("amount has more than 2 decimal places: '10.005'",)
