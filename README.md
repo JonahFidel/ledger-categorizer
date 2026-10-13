@@ -24,7 +24,7 @@ Detail is in [docs/decisions.md](docs/decisions.md).
 
 ## Where I used AI and where I overrode it
 
-Claude Code (inside my [Firstmate](https://github.com/kunchenguid/firstmate) setup) read the spec, spotted the rent trap, proposed options, and wrote the code and tests. I reviewed every decision and phase on [Lavish](https://github.com/kunchenguid/lavish-axi) pages. I used ChatGPT only to understand the assignment. Where I overrode Claude Code:
+Claude Code (inside my [Firstmate](https://github.com/kunchenguid/firstmate) setup) read the spec, spotted the rent trap, proposed options, and wrote the code and tests. I reviewed every decision and phase on [Lavish](https://github.com/kunchenguid/lavish-axi) pages. Before merging, [no-mistakes](https://github.com/kunchenguid/no-mistakes) ran an automated code review, live end-to-end tests, and docs and lint checks (no findings), then opened the PR. I used ChatGPT only to understand the assignment. Where I overrode Claude Code:
 
 - It recommended "merchant list first" for transfers. I combined that with its phrase-list option and asked how failures could always be safe, which produced the evidence rule.
 - It proposed Ruby. I chose Python, which I'm fastest reviewing after recent interview practice.
