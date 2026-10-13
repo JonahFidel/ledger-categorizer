@@ -42,3 +42,10 @@ Tool: Claude Code (Opus), driven from a planning conversation plus Lavish review
   a reworded "XFER TO SAV 8810" now goes to review instead of auto-matching (flagged for my review).
 - AI added two review reasons beyond the spec, following my fail-safe rule: a winning version that is still
   PENDING, and money moving the wrong way for its category (e.g. money out to TOAST PAYOUT). Neither fires on the real feed.
+- I approved phase 3, kept AI's tighter own-account rule and both extra review reasons
+  (I agreed money moving the wrong way for its category should be flagged).
+
+## Process
+- From phase 4 on, each phase is built on its own branch and merged only after I approve its review board.
+  I tried to run parallel helper agents for the README draft and the full expected-output file; my agent setup
+  only allows that through a heavier worker process, so I kept it sequential on branches instead.
