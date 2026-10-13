@@ -29,3 +29,7 @@ Tool: Claude Code (Opus), driven from a planning conversation plus Lavish review
 ## Phase 2: merchant catalog
 - AI wrote catalog.py + tests. Boundary rule (name must end before a letter, so "SYSCOMM" != "SYSCO")
   came out of my question about what "prefix without a word boundary" meant.
+- I agreed a broken merchant list should stop the command (we maintain it), but asked that it be thoroughly
+  tested so we know it's good before anything runs: added tests that pin the shipped list to the spec table.
+- Phase 1 follow-ups (my calls): unreadable values are left blank; review reasons go to a separate
+  review_notes.csv so ledger_lines.csv keeps the spec's exact format; a missing file or column stops with a clear message.

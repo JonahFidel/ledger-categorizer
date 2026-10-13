@@ -88,3 +88,62 @@ def test_list_file_needs_both_columns(tmp_path):
     path.write_text("name,category\nSYSCO,Food & beverage\n")
     with pytest.raises(CatalogError, match="columns"):
         MerchantCatalog.from_csv(path)
+
+
+# --- The shipped list must be exactly the spec's table. A typo here would
+# silently miscategorize, so these pin the file before anything runs.
+
+SPEC_TABLE = [
+    ("SYSCO", "Food & beverage"),
+    ("US FOODS", "Food & beverage"),
+    ("RESTAURANT DEPOT", "Food & beverage"),
+    ("METRO GAS & ELECTRIC", "Utilities"),
+    ("CITY WATER DEPT", "Utilities"),
+    ("COMCAST BUSINESS", "Utilities"),
+    ("HOME DEPOT", "Repairs & maintenance"),
+    ("ECOLAB", "Cleaning & supplies"),
+    ("WEBSTAURANT STORE", "Smallwares & supplies"),
+    ("GUSTO", "Payroll"),
+    ("INDEED", "Hiring"),
+    ("7SHIFTS", "Software"),
+    ("MAINLINE PROPERTIES", "Rent"),
+    ("TOAST PAYOUT", "Card sales"),
+    ("DOORDASH PAYOUT", "Delivery sales"),
+    ("UBER EATS PAYOUT", "Delivery sales"),
+]
+
+
+def shipped_rows():
+    import csv
+    with open(MERCHANTS, newline="", encoding="utf-8") as f:
+        return list(csv.DictReader(f))
+
+
+def test_shipped_list_is_exactly_the_spec_table():
+    assert [(r["merchant"], r["category"]) for r in shipped_rows()] == SPEC_TABLE
+
+
+def test_shipped_list_has_no_stray_whitespace_or_case_drift():
+    for r in shipped_rows():
+        assert r["merchant"] == r["merchant"].strip().upper(), r
+        assert r["category"] == r["category"].strip(), r
+
+
+def test_shipped_list_has_no_duplicate_names():
+    names = [r["merchant"] for r in shipped_rows()]
+    assert len(names) == len(set(names))
+
+
+@pytest.mark.parametrize("name,category", SPEC_TABLE)
+def test_every_spec_name_matches_itself_and_with_store_junk(catalog, name, category):
+    assert catalog.match(name).category == category
+    assert catalog.match(f"{name} #123").category == category
+    assert catalog.match(name.lower()).category == category
+
+
+def test_no_list_name_hides_another():
+    # With longest-wins, a shorter name can never shadow a longer one; this guards
+    # against someone later replacing that rule with first-match-wins.
+    catalog = MerchantCatalog.from_csv(MERCHANTS)
+    for name, _ in SPEC_TABLE:
+        assert catalog.match(name).name == name
