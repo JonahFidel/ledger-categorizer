@@ -39,11 +39,17 @@ def _pick(versions: list[Transaction]) -> Transaction:
         issues = [i for v in at_top for i in v.issues]
         if len(set(at_top)) > 1:  # set() collapses exact repeats, which are harmless
             lines = ", ".join(str(v.line) for v in at_top)
-            issues.append(f"conflicting versions in sync_batch {top} (lines {lines}); kept line {winner.line}")
+            issues.append(
+                f"conflicting versions in sync_batch {top} (lines {lines}); "
+                f"kept line {winner.line}"
+            )
 
     for v in unknown:
         if v is not winner:
-            issues.append(f"another version on line {v.line} has an unreadable sync_batch; it may be newer")
+            issues.append(
+                f"another version on line {v.line} has an unreadable sync_batch; "
+                "it may be newer"
+            )
             issues.extend(v.issues)
 
     return replace(winner, issues=tuple(dict.fromkeys(issues)))  # dedupe, keep order
