@@ -4,7 +4,7 @@ import pytest
 
 from conftest import txn
 from ledger.dedupe import latest_versions
-from ledger.feed import FeedError, read_feed
+from ledger.feed import read_feed
 
 
 def test_feed_collapses_to_one_row_per_id(feed_path):
@@ -46,9 +46,44 @@ def test_output_keeps_first_appearance_order():
 
 def test_exact_repeat_in_same_batch_is_harmless():
     t = txn()
-    assert latest_versions([t, txn(line=99)]) == [t]
+    [kept] = latest_versions([t, txn(line=99)])
+    assert kept == t and kept.issues == ()
 
 
-def test_conflicting_versions_in_same_batch_stop_the_run():
-    with pytest.raises(FeedError, match="txn_1 appears twice in sync_batch 1"):
-        latest_versions([txn(amount="10.00"), txn(amount="12.00")])
+def test_conflicting_versions_in_same_batch_keep_one_line_flagged():
+    first, second = txn(amount="10.00", line=2), txn(amount="12.00", line=3)
+    [kept] = latest_versions([first, second])
+    assert kept.amount == Decimal("12.00")  # later row in the file
+    assert kept.issues == ("conflicting versions in sync_batch 1 (lines 2, 3); kept line 3",)
+
+
+def test_conflict_in_an_older_batch_doesnt_matter_once_a_newer_batch_arrives():
+    rows = [txn(amount="10.00"), txn(amount="12.00"), txn(sync_batch=2, amount="11.00")]
+    [kept] = latest_versions(rows)
+    assert kept.amount == Decimal("11.00") and kept.issues == ()
+
+
+def test_problems_on_a_superseded_version_are_dropped():
+    old_bad = txn(sync_batch=1, amount=None, issues=("amount is not a number: 'x'",))
+    new_good = txn(sync_batch=2)
+    [kept] = latest_versions([old_bad, new_good])
+    assert kept.issues == ()
+
+
+def test_unreadable_batch_flags_the_id_because_that_version_might_be_newer():
+    good = txn(sync_batch=1, line=2)
+    unknown = txn(sync_batch=None, amount="99.00", line=3, issues=("sync_batch is not an integer: 'x'",))
+    [kept] = latest_versions([good, unknown])
+    assert kept.amount == Decimal("10.00")
+    assert "line 3 has an unreadable sync_batch" in kept.issues[0]
+    assert "sync_batch is not an integer: 'x'" in kept.issues
+
+
+def test_rows_without_an_id_are_each_kept():
+    a = txn(id="", line=5, issues=("id is empty: ''",))
+    b = txn(id="", line=9, amount="3.00", issues=("id is empty: ''",))
+    assert latest_versions([a, b]) == [a, b]
+
+
+def test_clean_feed_has_no_issues(feed_path):
+    assert all(r.issues == () for r in latest_versions(read_feed(feed_path)))

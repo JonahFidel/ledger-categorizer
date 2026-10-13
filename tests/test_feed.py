@@ -44,15 +44,29 @@ def test_whitespace_and_account_case_are_normalized():
     assert t.amount == Decimal("-5.00")
 
 
-@pytest.mark.parametrize("col,value", [
-    ("id", ""),
-    ("sync_batch", "two"),
-    ("date", "08/03/2026"),
-    ("account", "savings"),
-    ("amount", "12,00"),
-    ("amount", "NaN"),
+@pytest.mark.parametrize("col,value,field", [
+    ("id", "", None),
+    ("sync_batch", "two", "sync_batch"),
+    ("date", "08/03/2026", "date"),
+    ("amount", "12,00", "amount"),
+    ("amount", "NaN", "amount"),
 ])
-def test_bad_values_stop_the_run_with_line_number(col, value):
-    rows = [row(), row(**{col: value})]
-    with pytest.raises(FeedError, match=rf"line 3: {col}"):
-        parse_rows(rows)
+def test_bad_values_are_flagged_not_fatal(col, value, field):
+    good, broken = parse_rows([row(), row(**{col: value})])
+    assert good.issues == ()
+    assert broken.line == 3
+    assert len(broken.issues) == 1 and broken.issues[0].startswith(col)
+    if field:
+        assert getattr(broken, field) is None  # unparseable value left empty, never guessed
+    assert broken.merchant == "SYSCO"  # the rest of the row survives
+
+
+def test_unknown_account_is_kept_raw_and_flagged():
+    [t] = parse_rows([row(account="Savings")])
+    assert t.account == "savings"
+    assert t.issues == ("account is not one of card, bank: 'Savings'",)
+
+
+def test_every_problem_on_a_row_is_reported():
+    [t] = parse_rows([row(date="soon", amount="lots")])
+    assert [i.split()[0] for i in t.issues] == ["date", "amount"]

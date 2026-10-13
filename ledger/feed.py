@@ -1,34 +1,36 @@
-"""Read the provider's raw transaction feed into typed, validated rows.
+"""Read the provider's raw transaction feed into typed rows.
 
-The feed is trusted for shape, not content: a malformed row stops the run with
-its line number rather than being skipped, because a silently dropped
-transaction is a wrong ledger.
+Bad data never stops the run: a value that can't be parsed is left empty and
+the problem is recorded on the row, so the row still becomes a ledger line and
+lands in the review queue. Only a file that can't be read at all (missing, or
+missing a required column) raises.
 """
 
 import csv
 from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal, InvalidOperation
-from typing import Iterable
+from typing import Iterable, Optional
 
 REQUIRED_COLUMNS = ("id", "sync_batch", "date", "account", "merchant", "memo", "amount")
 ACCOUNTS = ("card", "bank")
 
 
 class FeedError(ValueError):
-    """The feed can't be turned into a ledger as-is."""
+    """The feed file as a whole can't be read."""
 
 
 @dataclass(frozen=True)
 class Transaction:
     id: str
-    sync_batch: int
-    date: date
-    account: str  # "card" or "bank"
+    sync_batch: Optional[int]
+    date: Optional[date]
+    account: str  # "card" or "bank" when valid; the raw value otherwise (with an issue)
     merchant: str
     memo: str
-    amount: Decimal  # positive = money leaving the operator
-    line: int = field(default=0, compare=False)  # source line, for error messages only
+    amount: Optional[Decimal]  # positive = money leaving the operator
+    line: int = field(default=0, compare=False)  # source line, for review notes
+    issues: tuple = field(default=(), compare=False)  # why this row needs a human
 
 
 def read_feed(path) -> list[Transaction]:
@@ -45,36 +47,39 @@ def parse_rows(rows: Iterable[dict], first_line: int = 2) -> list[Transaction]:
 
 
 def _parse_row(row: dict, line: int) -> Transaction:
+    issues = []
+
     def text(col):
         return (row.get(col) or "").strip()
 
-    def fail(col, why):
-        raise FeedError(f"line {line}: {col} {why}: {row.get(col)!r}")
+    def bad(col, why):
+        issues.append(f"{col} {why}: {text(col)!r}")
+        return None
 
     txn_id = text("id")
     if not txn_id:
-        fail("id", "is empty")
+        bad("id", "is empty")
 
     try:
         sync_batch = int(text("sync_batch"))
     except ValueError:
-        fail("sync_batch", "is not an integer")
+        sync_batch = bad("sync_batch", "is not an integer")
 
     try:
         txn_date = date.fromisoformat(text("date"))
     except ValueError:
-        fail("date", "is not YYYY-MM-DD")
+        txn_date = bad("date", "is not YYYY-MM-DD")
 
     account = text("account").lower()
     if account not in ACCOUNTS:
-        fail("account", f"is not one of {ACCOUNTS}")
+        bad("account", f"is not one of {', '.join(ACCOUNTS)}")
 
     try:
         amount = Decimal(text("amount"))
+        if not amount.is_finite():
+            amount = bad("amount", "is not a finite number")
     except InvalidOperation:
-        fail("amount", "is not a number")
-    if not amount.is_finite():
-        fail("amount", "is not a finite number")
+        amount = bad("amount", "is not a number")
 
     return Transaction(
         id=txn_id,
@@ -85,4 +90,5 @@ def _parse_row(row: dict, line: int) -> Transaction:
         memo=text("memo"),
         amount=amount,
         line=line,
+        issues=tuple(issues),
     )

@@ -18,3 +18,8 @@ Tool: Claude Code (Opus), driven from a planning conversation plus Lavish review
 
 ## Phase 1: feed + dedupe
 - AI wrote feed.py, dedupe.py and their tests; I reviewed on the phase board.
+- Override: AI's first version stopped the whole run on any malformed row, an unknown account, or two
+  conflicting versions of an id in one batch. I rejected that: the command should be as failure-resistant
+  as possible, and anything that looks wrong should go to the review queue. Rewritten so that bad values are
+  left empty and recorded as issues on the row, conflicting versions keep one line flagged for review, and
+  only an unreadable file (missing or missing a column) stops the run.
